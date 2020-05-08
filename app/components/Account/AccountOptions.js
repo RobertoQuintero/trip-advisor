@@ -10,7 +10,7 @@ import ChangePassword from "./ChangePassword";
 const AccountOptions = ({ userInfo, toastRef, setReloadUserInfo }) => {
   const [showModal, setShowModal] = useState(false);
   const [renderComponent, setRenderComponent] = useState(null);
-  console.log(userInfo);
+
   const selectedComponent = (key) => {
     switch (key) {
       case "displayName":

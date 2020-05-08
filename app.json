@@ -19,10 +19,19 @@
       "supportsTablet": true
     },
     "android": {
+      "package": "com.serviciosquintero.cincotenedores",
+      "config": {
+        "googleMaps": {
+          "apiKey": "AIzaSyAEAazLgPF5kagVVYGscKtO2C85zB4djFI"
+        }
+      },
       "permissions": [
         "CAMERA_ROLL",
         "READ_EXTERNAL_STORAGE",
-        "WRITE_EXTERNAL_STORAGE"
+        "WRITE_EXTERNAL_STORAGE",
+        "LOCATION",
+        "ACCESS_COARSE_LOCATION",
+        "ACCESS_FINE_LOCATION"
       ]
     },
     "description": ""

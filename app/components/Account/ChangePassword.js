@@ -63,7 +63,6 @@ const ChangePassword = ({ setShowModal, toastRef }) => {
               };
               setIsLoading(false);
             });
-          console.log("ok");
         })
         .catch(() => {
           errorsTemp = {
