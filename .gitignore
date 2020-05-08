@@ -12,3 +12,4 @@ web-report/
 config.js
 # macOS
 .DS_Store
+API_KEY.txt
