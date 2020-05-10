@@ -12,6 +12,11 @@ const LoginForm = ({ toastRef }) => {
   const [formData, setFormData] = useState(defaultFormValue());
   const [loading, setLoading] = useState(false);
   const navigation = useNavigation();
+  //after favorites logout
+  //
+  // firebase.auth().onAuthStateChanged(user=>{
+  //   user && navigation.navigate('account')
+  // })
 
   const onChange = (e, type) => {
     setFormData({
@@ -32,6 +37,7 @@ const LoginForm = ({ toastRef }) => {
         .then(() => {
           setLoading(false);
           navigation.navigate("account");
+          // navigation.goBack()
         })
         .catch(() => {
           setLoading(false);

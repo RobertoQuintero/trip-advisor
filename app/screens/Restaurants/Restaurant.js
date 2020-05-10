@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from "react";
+import React, { useState, useCallback, useRef, useEffect } from "react";
 import { StyleSheet, Text, View, ScrollView, Dimensions } from "react-native";
 
 import { firebaseapp } from "../../utils/firebase";
@@ -9,12 +9,14 @@ import Loading from "../../components/Loading";
 import Carousel from "../../components/Carousel";
 const screenWidth = Dimensions.get("window").width;
 
-import { Rating, ListItem } from "react-native-elements";
+import { Rating, ListItem, Icon } from "react-native-elements";
 import Map from "../../components/Map";
 import { map } from "lodash";
 import ListReviews from "../../components/Restaurants/ListReviews";
 //
 import { useFocusEffect } from "@react-navigation/native";
+//
+import Toast from "react-native-easy-toast";
 
 export default Restaurant = (props) => {
   const { navigation, route } = props;
@@ -22,6 +24,15 @@ export default Restaurant = (props) => {
   navigation.setOptions({ title: name });
   const [restaurant, setRestaurant] = useState(null);
   const [rating, setRating] = useState(0);
+  //
+  const [isFavorite, setIsFavorite] = useState(false);
+  const [userLogged, setUserLogged] = useState(false);
+  //
+  firebase.auth().onAuthStateChanged((user) => {
+    user ? setUserLogged(true) : setUserLogged(false);
+  });
+  //
+  const toastRef = useRef();
 
   useFocusEffect(
     useCallback(() => {
@@ -29,18 +40,86 @@ export default Restaurant = (props) => {
         .doc(id)
         .get()
         .then((response) => {
-          // console.log(response.data());
           const data = response.data();
           data.id = response.id;
-          setRestaurant(data);
           setRating(data.rating);
+          setRestaurant(data);
         });
     }, [])
   );
+  useEffect(() => {
+    if (userLogged && restaurant) {
+      db.collection("favorites")
+        .where("idRestaurant", "==", restaurant.id)
+        .where("idUser", "==", firebase.auth().currentUser.uid)
+        .get() //idiota que no se te olvide este!!! :(
+        .then((response) => {
+          if (response.docs.length) {
+            setIsFavorite(true);
+          }
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    }
+  }, [userLogged, restaurant]);
+  //
+  const addFavorite = () => {
+    if (!userLogged) {
+      toastRef.current.show(
+        "Para  usar el sistema de favoritos tienes que estar loggeado"
+      );
+    } else {
+      const payload = {
+        idUser: firebase.auth().currentUser.uid,
+        idRestaurant: restaurant.id,
+      };
+      db.collection("favorites")
+        .add(payload)
+        .then(() => {
+          setIsFavorite(true);
+          toastRef.current.show("Restaurante añadido a favoritos");
+        })
+        .catch(() => {
+          toastRef.current.show("Error al añadir el restaurante a favoritos");
+        });
+    }
+  };
+  const removeFavorite = () => {
+    db.collection("favorites")
+      .where("idRestaurant", "==", restaurant.id)
+      .where("idUser", "==", firebase.auth().currentUser.uid)
+      .get()
+      .then((response) => {
+        response.forEach((doc) => {
+          const idFavorite = doc.id;
+          db.collection("favorites")
+            .doc(idFavorite)
+            .delete()
+            .then(() => {
+              setIsFavorite(false);
+              toastRef.current.show("Eliminado de favoritos");
+            })
+            .catch(() => {
+              toastRef.current.show("error al eliminar de favoritos");
+            });
+        });
+      });
+  };
 
   if (!restaurant) return <Loading isVisible={true} text="Cargando..." />;
   return (
     <ScrollView vertical style={styles.viewBody}>
+      <View style={styles.viewFavorite}>
+        <Icon
+          type="material-community"
+          name={isFavorite ? "heart" : "heart-outline"}
+          onPress={isFavorite ? removeFavorite : addFavorite}
+          color={isFavorite ? "#f00" : "#000"}
+          size={35}
+          underlayColor="transparent"
+        />
+      </View>
       <Carousel
         arrayImages={restaurant.images}
         height={250}
@@ -61,6 +140,7 @@ export default Restaurant = (props) => {
         idRestaurant={restaurant.id}
         setRating={setRating}
       />
+      <Toast ref={toastRef} position="center" opacity={0.9} />
     </ScrollView>
   );
 };

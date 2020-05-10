@@ -54,14 +54,14 @@ const AddReviewRestaurant = (props) => {
     restaurantRef.get().then((response) => {
       const restaurantData = response.data();
       const ratingTotal = restaurantData.ratingTotal + rating;
-      const quantityVoting = restaurantData.quantityVoting + 1;
+      const quantityVoting = restaurantData.quaantityVoting + 1;
       const ratingResult = ratingTotal / quantityVoting;
 
       restaurantRef
         .update({
           rating: ratingResult,
           ratingTotal,
-          quantityVoting,
+          quaantityVoting: quantityVoting,
         })
         .then(() => {
           setIsLoading(false);

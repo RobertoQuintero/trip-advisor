@@ -48,7 +48,7 @@ const AddRestaurantForm = ({ toastRef, setIsLoading, navigation }) => {
             createBy: firebase.auth().currentUser.uid,
           })
           .then(() => {
-            console.log("0k");
+            // console.log("0k");
             setIsLoading(false);
             navigation.navigate("restaurants");
           })
@@ -63,7 +63,7 @@ const AddRestaurantForm = ({ toastRef, setIsLoading, navigation }) => {
   };
   //after map
   const uploadImageStorage = async () => {
-    console.log(imageSelected);
+    // console.log(imageSelected);
     const imageBlob = [];
 
     await Promise.all(

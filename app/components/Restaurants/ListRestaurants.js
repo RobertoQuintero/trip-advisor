@@ -9,6 +9,7 @@ import {
 } from "react-native";
 import { Image } from "react-native-elements";
 import { useNavigation } from "@react-navigation/native";
+//
 const ListRestaurants = (props) => {
   const { restaurants, handleLoadMore, isLoading } = props;
   const navigation = useNavigation();
