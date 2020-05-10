@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useCallback } from "react";
 import { StyleSheet, Text, View, ScrollView, Dimensions } from "react-native";
 
 import { firebaseapp } from "../../utils/firebase";
@@ -9,9 +9,12 @@ import Loading from "../../components/Loading";
 import Carousel from "../../components/Carousel";
 const screenWidth = Dimensions.get("window").width;
 
-import { Rating, ListItem, Icon } from "react-native-elements";
+import { Rating, ListItem } from "react-native-elements";
 import Map from "../../components/Map";
 import { map } from "lodash";
+import ListReviews from "../../components/Restaurants/ListReviews";
+//
+import { useFocusEffect } from "@react-navigation/native";
 
 export default Restaurant = (props) => {
   const { navigation, route } = props;
@@ -20,18 +23,20 @@ export default Restaurant = (props) => {
   const [restaurant, setRestaurant] = useState(null);
   const [rating, setRating] = useState(0);
 
-  useEffect(() => {
-    db.collection("restaurants")
-      .doc(id)
-      .get()
-      .then((response) => {
-        console.log(response.data());
-        const data = response.data();
-        data.id = response.id;
-        setRestaurant(data);
-        setRating(data.rating);
-      });
-  }, []);
+  useFocusEffect(
+    useCallback(() => {
+      db.collection("restaurants")
+        .doc(id)
+        .get()
+        .then((response) => {
+          // console.log(response.data());
+          const data = response.data();
+          data.id = response.id;
+          setRestaurant(data);
+          setRating(data.rating);
+        });
+    }, [])
+  );
 
   if (!restaurant) return <Loading isVisible={true} text="Cargando..." />;
   return (
@@ -50,6 +55,11 @@ export default Restaurant = (props) => {
         location={restaurant.location}
         name={restaurant.name}
         address={restaurant.address}
+      />
+      <ListReviews
+        navigation={navigation}
+        idRestaurant={restaurant.id}
+        setRating={setRating}
       />
     </ScrollView>
   );
