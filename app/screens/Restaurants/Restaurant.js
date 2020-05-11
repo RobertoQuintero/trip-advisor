@@ -45,7 +45,7 @@ export default Restaurant = (props) => {
           setRating(data.rating);
           setRestaurant(data);
         });
-    }, [])
+    }, [name])
   );
   useEffect(() => {
     if (userLogged && restaurant) {
