@@ -10,7 +10,7 @@ const db = firebase.firestore(firebaseapp);
 import { map } from "lodash";
 
 const ListReviews = (props) => {
-  const { navigation, idRestaurant, setRating } = props;
+  const { navigation, idRestaurant, rating } = props;
   const [userLogged, setUserLogged] = useState(false);
   //
   const [reviews, setReviews] = useState([]);
@@ -31,7 +31,7 @@ const ListReviews = (props) => {
         });
         setReviews(resultReview);
       });
-  }, []);
+  }, [rating]);
   return (
     <View>
       {userLogged ? (

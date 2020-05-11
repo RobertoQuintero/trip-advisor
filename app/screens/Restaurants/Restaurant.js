@@ -138,7 +138,7 @@ export default Restaurant = (props) => {
       <ListReviews
         navigation={navigation}
         idRestaurant={restaurant.id}
-        setRating={setRating}
+        rating={restaurant.rating}
       />
       <Toast ref={toastRef} position="center" opacity={0.9} />
     </ScrollView>
